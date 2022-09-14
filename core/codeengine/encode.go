@@ -1,31 +1,30 @@
 package codeengine
 
-
-
-func EncodeBool(buff []byte, b bool) []byte {
+func (d *CodeEngine) EncodeBool(b bool) {
 	if b {
-		return append(buff, byte(1))
+		d.Buff = append(d.Buff, byte(1))
 	} else {
-		return append(buff, byte(0))
+		d.Buff = append(d.Buff, byte(0))
 	}
 }
 
-func EncodeInt8(buff []byte, i int8) []byte {
-	return append(buff, byte(i))
+func (d *CodeEngine) EncodeInt8(i int8) {
+	d.Buff = append(d.Buff, byte(i))
 }
 
-func EncodeInt16(buff []byte, i int16) []byte {
-
+func (d *CodeEngine) EncodeInt16(i int16) {
+	d.Buff = append(d.Buff, byte(i>>8), byte(i))
 }
 
-func EncodeInt32(buff []byte, i int32) []byte {
-
+func (d *CodeEngine) EncodeInt32(i int32) {
+	d.Buff = append(d.Buff, byte(i>>24), byte(i>>16), byte(i>>8), byte(i))
 }
 
-func EncodeInt64(buff []byte, i int64) []byte {
-
+func (d *CodeEngine) EncodeInt64(i int64) {
+	d.Buff = append(d.Buff, byte(i>>56), byte(i>>48), byte(i>>40), byte(i>>32), byte(i>>24), byte(i>>16), byte(i>>8), byte(i))
 }
 
-func EncodeString(buff []byte, s string) []byte {
-
+func (d *CodeEngine) EncodeString(s string) {
+	d.EncodeInt16(int16(len(s)))
+	d.Buff = append(d.Buff, []byte(s)...)
 }
