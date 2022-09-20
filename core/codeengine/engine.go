@@ -9,3 +9,11 @@ func NewCodeEngine() *CodeEngine {
 		Buff: make([]byte, 0),
 	}
 }
+
+func (d *CodeEngine) GetBuff() []byte {
+	return d.Buff
+}
+
+func (d *CodeEngine) String() string {
+	return string(d.Buff)
+}

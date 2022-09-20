@@ -15,7 +15,7 @@ func (d *CodeEngine) DecodeBool(pos int) (bool, int, error) {
 }
 
 func (d *CodeEngine) DecodeInt8(pos int) (int8, int, error) {
-	if pos >= len(d.Buff) {
+	if pos > len(d.Buff) {
 		return 0, pos, errors.New("decode buff length is not enough")
 	}
 
@@ -23,7 +23,7 @@ func (d *CodeEngine) DecodeInt8(pos int) (int8, int, error) {
 }
 
 func (d *CodeEngine) DecodeInt16(pos int) (int16, int, error) {
-	if pos+2 >= len(d.Buff) {
+	if pos+2 > len(d.Buff) {
 		return 0, pos, errors.New("decode buff length is not enough")
 	}
 
@@ -34,7 +34,7 @@ func (d *CodeEngine) DecodeInt16(pos int) (int16, int, error) {
 }
 
 func (d *CodeEngine) DecodeInt32(pos int) (int32, int, error) {
-	if pos+4 >= len(d.Buff) {
+	if pos+4 > len(d.Buff) {
 		return 0, pos, errors.New("decode buff length is not enough")
 	}
 
@@ -47,7 +47,7 @@ func (d *CodeEngine) DecodeInt32(pos int) (int32, int, error) {
 }
 
 func (d *CodeEngine) DecodeInt64(pos int) (int64, int, error) {
-	if pos+8 >= len(d.Buff) {
+	if pos+8 > len(d.Buff) {
 		return 0, pos, errors.New("decode buff length is not enough")
 	}
 
@@ -69,7 +69,7 @@ func (d *CodeEngine) DecodeString(pos int) (string, int, error) {
 		return "", pos, err
 	}
 
-	if pos+int(strLen) >= len(d.Buff) {
+	if pos+int(strLen) > len(d.Buff) {
 		return "", pos, errors.New("decode buff length is not enough")
 	}
 
