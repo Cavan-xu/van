@@ -1,6 +1,6 @@
 {
-  "ip": "",
-  "port": 843,
+  "ip": "127.0.0.1",
+  "port": 12310,
   "server_name": "server",
   "network": "tcp",
   "read_buffer": 2048,

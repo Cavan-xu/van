@@ -2,17 +2,24 @@ package vnet
 
 import (
 	"net"
+	"sync/atomic"
 	"van/core/log"
 )
 
-type server struct {
+type Server struct {
+	// 为每个连接分配的 id
+	connId *int64
+
 	*Config
 	*log.Log
+	ConnectionMgr *ConnectionMgr
 }
 
-func NewServer(config *Config, opts ...option) (*server, error) {
-	s := &server{
-		Config: config,
+func NewServer(config *Config, opts ...Option) (*Server, error) {
+	s := &Server{
+		connId:        new(int64),
+		Config:        config,
+		ConnectionMgr: NewConnectionMgr(),
 	}
 
 	for _, opt := range opts {
@@ -22,7 +29,7 @@ func NewServer(config *Config, opts ...option) (*server, error) {
 	return s, nil
 }
 
-func (s *server) setUp() error {
+func (s *Server) setUp() error {
 	if err := s.check(); err != nil {
 		return err
 	}
@@ -30,7 +37,7 @@ func (s *server) setUp() error {
 	return nil
 }
 
-func (s *server) start() error {
+func (s *Server) start() error {
 	tcpAddr, err := net.ResolveTCPAddr(s.Network, s.Address())
 	if err != nil {
 		return err
@@ -52,12 +59,19 @@ func (s *server) start() error {
 		s.LogInfo("receive a tcp conn from: %s", conn.RemoteAddr())
 		_ = conn.SetReadBuffer(s.ReadBuffer)
 		_ = conn.SetWriteBuffer(s.WriteBuffer)
+
+		workConn := NewConnection(s.autoIncrConnId(), conn, s)
+		go workConn.start()
 	}()
 
 	return nil
 }
 
-func (s *server) Server() {
+func (s *Server) autoIncrConnId() int64 {
+	return atomic.AddInt64(s.connId, 1)
+}
+
+func (s *Server) Server() {
 	if err := s.start(); err != nil {
 		s.LogErr(err)
 		return
@@ -66,6 +80,10 @@ func (s *server) Server() {
 	select {}
 }
 
-func (s *server) Stop() {
+func (s *Server) Stop() {
 	s.LogInfo("stop Server")
+}
+
+func (s *Server) GetConnectionMgr() *ConnectionMgr {
+	return s.ConnectionMgr
 }

@@ -1,9 +1,9 @@
 package vnet
 
-type option func(s *server)
+type Option func(s *Server)
 
-func WithIp(ip string) option {
-	return func(s *server) {
+func WithIp(ip string) Option {
+	return func(s *Server) {
 		s.Config.Ip = ip
 	}
 }

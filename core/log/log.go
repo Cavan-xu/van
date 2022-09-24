@@ -12,3 +12,7 @@ func (l *Log) LogInfo(info string, v ...interface{}) {
 func (l *Log) LogErr(err error) {
 	log.Println(err)
 }
+
+func (l *Log) LogPanic(val interface{}) {
+	log.Println(val)
+}

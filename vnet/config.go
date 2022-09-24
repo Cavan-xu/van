@@ -5,13 +5,18 @@ import (
 	"strconv"
 )
 
+const (
+	MsgChanSize = 2048
+)
+
 type Config struct {
 	Ip          string `json:"ip"`
 	Port        int    `json:"port"`
-	ServerName  string `json:"server_name"`  // server name of the tcp server
-	Network     string `json:"network"`      // tcp、tcp4 or tcp6
-	ReadBuffer  int    `json:"read_buffer"`  // tcp read buffer
-	WriteBuffer int    `json:"write_buffer"` // tcp write buffer
+	ServerName  string `json:"server_name"`   // Server name of the tcp Server
+	Network     string `json:"network"`       // tcp、tcp4 or tcp6
+	ReadBuffer  int    `json:"read_buffer"`   // tcp read buffer
+	WriteBuffer int    `json:"write_buffer"`  // tcp write buffer
+	MsgChanSize int    `json:"msg_chan_size"` // chan size
 	Log         struct {
 		FileName string `json:"file_name"` // log output file name
 		LogLevel int    `json:"log_level"`
@@ -36,6 +41,9 @@ func (c *Config) check() error {
 	}
 	if c.WriteBuffer < 0 {
 		c.WriteBuffer = 0
+	}
+	if c.MsgChanSize == 0 {
+		c.MsgChanSize = MsgChanSize
 	}
 
 	return nil
