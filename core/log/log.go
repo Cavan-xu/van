@@ -9,10 +9,10 @@ func (l *Log) LogInfo(info string, v ...interface{}) {
 	log.Printf(info, v)
 }
 
-func (l *Log) LogErr(err error) {
-	log.Println(err)
+func (l *Log) LogErr(info string, v ...interface{}) {
+	log.Printf(info, v)
 }
 
-func (l *Log) LogPanic(val interface{}) {
-	log.Println(val)
+func (l *Log) LogPanic(info string, v ...interface{}) {
+	log.Println(info, v)
 }

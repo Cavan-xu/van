@@ -1,6 +1,10 @@
 package main
 
-import "net"
+import (
+	"net"
+	"time"
+	"van/core/codeengine"
+)
 
 func main() {
 	rAddr, err := net.ResolveTCPAddr("tcp4", "127.0.0.1:12310")
@@ -14,6 +18,16 @@ func main() {
 	}
 
 	for {
-		conn.Read([]byte{})
+
+		engine := codeengine.NewCodeEngine()
+		engine.EncodeInt32(10)
+		engine.EncodeInt32(10)
+		engine.EncodeInt32(9)
+		data := []byte("hello van")
+		engine.Buff = append(engine.Buff, data...)
+
+		conn.Write(engine.GetBuff())
+
+		time.Sleep(10 * time.Second)
 	}
 }

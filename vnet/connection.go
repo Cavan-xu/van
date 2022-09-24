@@ -2,7 +2,7 @@ package vnet
 
 import (
 	"context"
-	"fmt"
+	"io"
 	"net"
 	"time"
 )
@@ -50,20 +50,32 @@ func (c *Connection) read() {
 	defer c.server.LogInfo("%s connection read exit", c.RemoteAddr().String())
 	defer c.Stop()
 
-	recvBuff := make([]byte, 0x10000)
-	recvBytes := 0
 	for {
 		select {
 		case <-c.ctx.Done():
 			c.server.LogInfo("%s connection stop read", c.RemoteAddr().String())
 			return
 		default:
-			n, err := c.conn.Read(recvBuff[recvBytes:])
-			if err != nil {
-				c.server.LogErr(err)
+			head := make([]byte, c.server.GetDataPack().GetHeadLen())
+			if _, err := io.ReadFull(c.conn, head); err != nil {
+				c.server.LogErr("%s connection read data error: %v", c.RemoteAddr().String(), err)
 				return
 			}
-			fmt.Println(n, err)
+			message, err := c.server.GetDataPack().UnPack(head)
+			if err != nil {
+				c.server.LogErr("unpack head err: %v", err)
+				return
+			}
+			var data []byte
+			if message.GetDataLen() > 0 {
+				data = make([]byte, message.GetDataLen())
+				if _, err := io.ReadFull(c.conn, data); err != nil {
+					c.server.LogErr("%s connection read data error: %v", c.RemoteAddr().String(), err)
+					return
+				}
+			}
+			message.SetData(data)
+			c.server.LogInfo("data: %s", string(message.Data))
 		}
 	}
 
@@ -77,7 +89,7 @@ func (c *Connection) write() {
 		select {
 		case data := <-c.msgChan:
 			if _, err := c.conn.Write(data); err != nil {
-				c.server.LogErr(err)
+				c.server.LogErr("%s connection write data error: %v", c.RemoteAddr().String(), err)
 				return
 			}
 		case <-c.ctx.Done():

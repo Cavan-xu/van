@@ -13,6 +13,7 @@ type Server struct {
 	*Config
 	*log.Log
 	ConnectionMgr *ConnectionMgr
+	DataPack      *DataPack
 }
 
 func NewServer(config *Config, opts ...Option) (*Server, error) {
@@ -20,6 +21,7 @@ func NewServer(config *Config, opts ...Option) (*Server, error) {
 		connId:        new(int64),
 		Config:        config,
 		ConnectionMgr: NewConnectionMgr(),
+		DataPack:      NewDataPack(),
 	}
 
 	for _, opt := range opts {
@@ -48,18 +50,17 @@ func (s *Server) start() error {
 		return err
 	}
 
-	s.LogInfo("listen tpc on: %s", s.Address())
+	s.LogInfo("listen tcp on: %s", s.Address())
 
 	go func() {
 		conn, err := listener.AcceptTCP()
 		if err != nil {
-			s.LogErr(err)
+			s.LogErr("lister accept tcp err: %v", err)
 			return
 		}
 		s.LogInfo("receive a tcp conn from: %s", conn.RemoteAddr())
 		_ = conn.SetReadBuffer(s.ReadBuffer)
 		_ = conn.SetWriteBuffer(s.WriteBuffer)
-
 		workConn := NewConnection(s.autoIncrConnId(), conn, s)
 		go workConn.start()
 	}()
@@ -73,7 +74,7 @@ func (s *Server) autoIncrConnId() int64 {
 
 func (s *Server) Server() {
 	if err := s.start(); err != nil {
-		s.LogErr(err)
+		s.LogErr("server start err: %v", err)
 		return
 	}
 
@@ -86,4 +87,8 @@ func (s *Server) Stop() {
 
 func (s *Server) GetConnectionMgr() *ConnectionMgr {
 	return s.ConnectionMgr
+}
+
+func (s *Server) GetDataPack() *DataPack {
+	return s.DataPack
 }

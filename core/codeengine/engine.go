@@ -17,3 +17,7 @@ func (d *CodeEngine) GetBuff() []byte {
 func (d *CodeEngine) String() string {
 	return string(d.Buff)
 }
+
+func (d *CodeEngine) SetBuff(buff []byte) {
+	d.Buff = buff
+}

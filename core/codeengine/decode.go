@@ -46,6 +46,19 @@ func (d *CodeEngine) DecodeInt32(pos int) (int32, int, error) {
 	return target, pos + 4, nil
 }
 
+func (d *CodeEngine) DecodeUint32(pos int) (uint32, int, error) {
+	if pos+4 > len(d.Buff) {
+		return 0, pos, errors.New("decode buff length is not enough")
+	}
+
+	v1 := int32(d.Buff[pos])
+	v2 := int32(d.Buff[pos+1])
+	v3 := int32(d.Buff[pos+2])
+	v4 := int32(d.Buff[pos+3])
+	target := v1<<24 | v2<<16 | v3<<8 | v4
+	return uint32(target), pos + 4, nil
+}
+
 func (d *CodeEngine) DecodeInt64(pos int) (int64, int, error) {
 	if pos+8 > len(d.Buff) {
 		return 0, pos, errors.New("decode buff length is not enough")
