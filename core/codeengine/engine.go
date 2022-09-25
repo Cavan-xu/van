@@ -21,3 +21,7 @@ func (d *CodeEngine) String() string {
 func (d *CodeEngine) SetBuff(buff []byte) {
 	d.Buff = buff
 }
+
+func (d *CodeEngine) AppendBuff(data []byte) {
+	d.Buff = append(d.Buff, data...)
+}

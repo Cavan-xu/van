@@ -11,8 +11,20 @@ func NewMessage() *Message {
 	return &Message{}
 }
 
+func (m *Message) GetMsgId() uint32 {
+	return m.MsgId
+}
+
+func (m *Message) GetConnId() uint32 {
+	return m.ConnId
+}
+
 func (m *Message) GetDataLen() uint32 {
 	return m.DataLen
+}
+
+func (m *Message) GetData() []byte {
+	return m.Data
 }
 
 func (m *Message) SetData(data []byte) {

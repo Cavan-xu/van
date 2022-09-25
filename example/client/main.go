@@ -3,7 +3,7 @@ package main
 import (
 	"net"
 	"time"
-	"van/core/codeengine"
+	"van/vnet"
 )
 
 func main() {
@@ -18,15 +18,15 @@ func main() {
 	}
 
 	for {
-
-		engine := codeengine.NewCodeEngine()
-		engine.EncodeInt32(10)
-		engine.EncodeInt32(10)
-		engine.EncodeInt32(9)
-		data := []byte("hello van")
-		engine.Buff = append(engine.Buff, data...)
-
-		conn.Write(engine.GetBuff())
+		message := &vnet.Message{
+			MsgId:   1,
+			ConnId:  1,
+			DataLen: 9,
+			Data:    []byte("hello van"),
+		}
+		pack := vnet.NewDataPack()
+		data := pack.Pack(message)
+		conn.Write(data)
 
 		time.Sleep(10 * time.Second)
 	}

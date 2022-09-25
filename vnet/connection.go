@@ -75,7 +75,7 @@ func (c *Connection) read() {
 				}
 			}
 			message.SetData(data)
-			c.server.LogInfo("data: %s", string(message.Data))
+			go c.server.MsgHandle.DoMsgHandle(NewRequest(c, message))
 		}
 	}
 

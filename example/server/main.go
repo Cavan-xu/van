@@ -3,6 +3,7 @@ package main
 import (
 	"path/filepath"
 	"van/core/conf"
+	"van/example/server/routers"
 	"van/vnet"
 )
 
@@ -23,6 +24,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	server.AddRouter(routers.NewPingRouter())
 
 	server.Server()
 }

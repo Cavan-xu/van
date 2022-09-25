@@ -14,6 +14,7 @@ type Server struct {
 	*log.Log
 	ConnectionMgr *ConnectionMgr
 	DataPack      *DataPack
+	MsgHandle     *MsgHandle
 }
 
 func NewServer(config *Config, opts ...Option) (*Server, error) {
@@ -22,6 +23,7 @@ func NewServer(config *Config, opts ...Option) (*Server, error) {
 		Config:        config,
 		ConnectionMgr: NewConnectionMgr(),
 		DataPack:      NewDataPack(),
+		MsgHandle:     NewMsgHandle(),
 	}
 
 	for _, opt := range opts {
@@ -53,16 +55,18 @@ func (s *Server) start() error {
 	s.LogInfo("listen tcp on: %s", s.Address())
 
 	go func() {
-		conn, err := listener.AcceptTCP()
-		if err != nil {
-			s.LogErr("lister accept tcp err: %v", err)
-			return
+		for {
+			conn, err := listener.AcceptTCP()
+			if err != nil {
+				s.LogErr("lister accept tcp err: %v", err)
+				return
+			}
+			s.LogInfo("receive a tcp conn from: %s", conn.RemoteAddr())
+			_ = conn.SetReadBuffer(s.ReadBuffer)
+			_ = conn.SetWriteBuffer(s.WriteBuffer)
+			workConn := NewConnection(s.autoIncrConnId(), conn, s)
+			go workConn.start()
 		}
-		s.LogInfo("receive a tcp conn from: %s", conn.RemoteAddr())
-		_ = conn.SetReadBuffer(s.ReadBuffer)
-		_ = conn.SetWriteBuffer(s.WriteBuffer)
-		workConn := NewConnection(s.autoIncrConnId(), conn, s)
-		go workConn.start()
 	}()
 
 	return nil
@@ -91,4 +95,8 @@ func (s *Server) GetConnectionMgr() *ConnectionMgr {
 
 func (s *Server) GetDataPack() *DataPack {
 	return s.DataPack
+}
+
+func (s *Server) AddRouter(router Router) {
+	s.MsgHandle.Add(router)
 }

@@ -18,6 +18,17 @@ func (p *DataPack) GetHeadLen() int {
 	return MessageHeadLen
 }
 
+// 数据装包
+func (p *DataPack) Pack(message *Message) []byte {
+	engine := codeengine.NewCodeEngine()
+	engine.EncodeUint32(message.MsgId)
+	engine.EncodeUint32(message.ConnId)
+	engine.EncodeUint32(message.DataLen)
+	engine.AppendBuff(message.Data)
+
+	return engine.GetBuff()
+}
+
 // 数据解包
 func (p *DataPack) UnPack(data []byte) (*Message, error) {
 	message := NewMessage()
