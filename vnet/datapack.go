@@ -6,6 +6,12 @@ var (
 	MessageHeadLen = 12
 )
 
+type IDataPack interface {
+	GetHeadLen() int
+	Pack(message IMessage) []byte
+	UnPack(data []byte) (IMessage, error)
+}
+
 type DataPack struct {
 }
 
@@ -19,18 +25,18 @@ func (p *DataPack) GetHeadLen() int {
 }
 
 // 数据装包
-func (p *DataPack) Pack(message *Message) []byte {
+func (p *DataPack) Pack(message IMessage) []byte {
 	engine := codeengine.NewCodeEngine()
-	engine.EncodeUint32(message.MsgId)
-	engine.EncodeUint32(message.ConnId)
-	engine.EncodeUint32(message.DataLen)
-	engine.AppendBuff(message.Data)
+	engine.EncodeUint32(message.GetMsgId())
+	engine.EncodeUint32(message.GetConnId())
+	engine.EncodeUint32(message.GetDataLen())
+	engine.AppendBuff(message.GetData())
 
 	return engine.GetBuff()
 }
 
 // 数据解包
-func (p *DataPack) UnPack(data []byte) (*Message, error) {
+func (p *DataPack) UnPack(data []byte) (IMessage, error) {
 	message := NewMessage()
 	engine := codeengine.NewCodeEngine()
 	engine.SetBuff(data)

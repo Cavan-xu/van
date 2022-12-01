@@ -14,8 +14,8 @@ type Config struct {
 	Port        int    `json:"port"`
 	ServerName  string `json:"server_name"`   // Server name of the tcp Server
 	Network     string `json:"network"`       // tcp、tcp4 or tcp6
-	ReadBuffer  int    `json:"read_buffer"`   // tcp read buffer
-	WriteBuffer int    `json:"write_buffer"`  // tcp write buffer
+	ReadBuffer  int    `json:"read_buffer"`   // tcp Read buffer
+	WriteBuffer int    `json:"write_buffer"`  // tcp Write buffer
 	MsgChanSize int    `json:"msg_chan_size"` // chan size
 	Log         struct {
 		FileName string `json:"file_name"` // log output file name

@@ -1,8 +1,8 @@
 package vnet
 
-type Router interface {
+type IRouter interface {
 	GetMsgId() uint32
-	PreHandle(request *Request)
-	Handle(request *Request)
-	AfterHandle(request *Request)
+	PreHandle(request IRequest)
+	Handle(request IRequest)
+	AfterHandle(request IRequest)
 }

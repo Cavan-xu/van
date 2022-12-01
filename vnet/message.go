@@ -1,5 +1,13 @@
 package vnet
 
+type IMessage interface {
+	GetMsgId() uint32
+	GetConnId() uint32
+	GetDataLen() uint32
+	GetData() []byte
+	SetData(data []byte)
+}
+
 type Message struct {
 	MsgId   uint32 // 消息id
 	ConnId  uint32 // 连接id

@@ -2,6 +2,12 @@ package log
 
 import "log"
 
+type ILog interface {
+	LogInfo(info string, v ...interface{})
+	LogErr(info string, v ...interface{})
+	LogPanic(info string, v ...interface{})
+}
+
 type Log struct {
 }
 

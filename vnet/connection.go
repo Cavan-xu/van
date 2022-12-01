@@ -7,6 +7,16 @@ import (
 	"time"
 )
 
+type IConnection interface {
+	GetId() int64
+	Start()
+	Read()
+	Write()
+	Stop()
+	SendMsg(data []byte)
+	GetServer() *Server
+}
+
 type Connection struct {
 	// 唯一id
 	id     int64
@@ -38,27 +48,35 @@ func NewConnection(id int64, conn *net.TCPConn, s *Server) *Connection {
 	return c
 }
 
-func (c *Connection) start() {
-	c.ctx, c.cancel = context.WithCancel(context.Background())
-	c.server.LogInfo("connection: %d start", c.id)
-	go c.read()
-	go c.write()
+func (c *Connection) GetId() int64 {
+	return c.id
 }
 
-func (c *Connection) read() {
-	c.server.LogInfo("%s connection start read goroutine", c.RemoteAddr().String())
-	defer c.server.LogInfo("%s connection read exit", c.RemoteAddr().String())
+func (c *Connection) GetServer() *Server {
+	return c.server
+}
+
+func (c *Connection) Start() {
+	c.ctx, c.cancel = context.WithCancel(context.Background())
+	c.server.LogInfo("connection: %d Start", c.id)
+	go c.Read()
+	go c.Write()
+}
+
+func (c *Connection) Read() {
+	c.server.LogInfo("%s connection Start Read goroutine", c.RemoteAddr().String())
+	defer c.server.LogInfo("%s connection Read exit", c.RemoteAddr().String())
 	defer c.Stop()
 
 	for {
 		select {
 		case <-c.ctx.Done():
-			c.server.LogInfo("%s connection stop read", c.RemoteAddr().String())
+			c.server.LogInfo("%s connection stop Read", c.RemoteAddr().String())
 			return
 		default:
 			head := make([]byte, c.server.GetDataPack().GetHeadLen())
 			if _, err := io.ReadFull(c.conn, head); err != nil {
-				c.server.LogErr("%s connection read data error: %v", c.RemoteAddr().String(), err)
+				c.server.LogErr("%s connection Read data error: %v", c.RemoteAddr().String(), err)
 				return
 			}
 			message, err := c.server.GetDataPack().UnPack(head)
@@ -70,7 +88,7 @@ func (c *Connection) read() {
 			if message.GetDataLen() > 0 {
 				data = make([]byte, message.GetDataLen())
 				if _, err := io.ReadFull(c.conn, data); err != nil {
-					c.server.LogErr("%s connection read data error: %v", c.RemoteAddr().String(), err)
+					c.server.LogErr("%s connection Read data error: %v", c.RemoteAddr().String(), err)
 					return
 				}
 			}
@@ -81,19 +99,19 @@ func (c *Connection) read() {
 
 }
 
-func (c *Connection) write() {
-	c.server.LogInfo("%s connection start write goroutine", c.RemoteAddr().String())
-	defer c.server.LogInfo("%s connection write exit", c.RemoteAddr().String())
+func (c *Connection) Write() {
+	c.server.LogInfo("%s connection Start Write goroutine", c.RemoteAddr().String())
+	defer c.server.LogInfo("%s connection Write exit", c.RemoteAddr().String())
 
 	for {
 		select {
 		case data := <-c.msgChan:
 			if _, err := c.conn.Write(data); err != nil {
-				c.server.LogErr("%s connection write data error: %v", c.RemoteAddr().String(), err)
+				c.server.LogErr("%s connection Write data error: %v", c.RemoteAddr().String(), err)
 				return
 			}
 		case <-c.ctx.Done():
-			c.server.LogInfo("%s connection stop write", c.RemoteAddr().String())
+			c.server.LogInfo("%s connection stop Write", c.RemoteAddr().String())
 			return
 		}
 	}

@@ -1,9 +1,29 @@
 package vnet
 
+import "van/core/log"
+
 type Option func(s *Server)
 
-func WithIp(ip string) Option {
+func WithLog(log log.ILog) Option {
 	return func(s *Server) {
-		s.Config.Ip = ip
+		s.ILog = log
+	}
+}
+
+func WithConnectionMgr(connectionMgr IConnectionMgr) Option {
+	return func(s *Server) {
+		s.ConnectionMgr = connectionMgr
+	}
+}
+
+func WithDataPack(dataPack IDataPack) Option {
+	return func(s *Server) {
+		s.DataPack = dataPack
+	}
+}
+
+func WithMsgHandler(msgHandler IMsgHandler) Option {
+	return func(s *Server) {
+		s.MsgHandle = msgHandler
 	}
 }

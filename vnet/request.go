@@ -1,14 +1,33 @@
 package vnet
 
-type Request struct {
-	*Connection
-	*Message
+type IRequest interface {
+	GetMsgId() uint32
+	GetConnection() IConnection
+	GetMessage() IMessage
+	GetServer() *Server
 }
 
-func NewRequest(connection *Connection, message *Message) *Request {
-	return &Request{Connection: connection, Message: message}
+type Request struct {
+	IConnection
+	IMessage
+}
+
+func NewRequest(connection IConnection, message IMessage) *Request {
+	return &Request{IConnection: connection, IMessage: message}
 }
 
 func (r *Request) GetMsgId() uint32 {
-	return r.MsgId
+	return r.IMessage.GetMsgId()
+}
+
+func (r *Request) GetConnection() IConnection {
+	return r.IConnection
+}
+
+func (r *Request) GetMessage() IMessage {
+	return r.IMessage
+}
+
+func (r *Request) GetServer() *Server {
+	return r.IConnection.GetServer()
 }

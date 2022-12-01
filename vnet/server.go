@@ -11,23 +11,26 @@ type Server struct {
 	connId *int64
 
 	*Config
-	*log.Log
-	ConnectionMgr *ConnectionMgr
-	DataPack      *DataPack
-	MsgHandle     *MsgHandle
+	log.ILog
+	ConnectionMgr IConnectionMgr
+	DataPack      IDataPack
+	MsgHandle     IMsgHandler
 }
 
 func NewServer(config *Config, opts ...Option) (*Server, error) {
 	s := &Server{
-		connId:        new(int64),
-		Config:        config,
-		ConnectionMgr: NewConnectionMgr(),
-		DataPack:      NewDataPack(),
-		MsgHandle:     NewMsgHandle(),
+		connId: new(int64),
+		Config: config,
+		//ConnectionMgr: NewConnectionMgr(),
+		//DataPack:      NewDataPack(),
+		//MsgHandle:     NewMsgHandle(),
 	}
 
 	for _, opt := range opts {
 		opt(s)
+	}
+	if err := s.setUp(); err != nil {
+		return nil, err
 	}
 
 	return s, nil
@@ -36,6 +39,18 @@ func NewServer(config *Config, opts ...Option) (*Server, error) {
 func (s *Server) setUp() error {
 	if err := s.check(); err != nil {
 		return err
+	}
+	if s.ILog == nil {
+		s.ILog = &log.Log{}
+	}
+	if s.ConnectionMgr == nil {
+		s.ConnectionMgr = NewConnectionMgr()
+	}
+	if s.DataPack == nil {
+		s.DataPack = NewDataPack()
+	}
+	if s.MsgHandle == nil {
+		s.MsgHandle = NewMsgHandle()
 	}
 
 	return nil
@@ -65,7 +80,7 @@ func (s *Server) start() error {
 			_ = conn.SetReadBuffer(s.ReadBuffer)
 			_ = conn.SetWriteBuffer(s.WriteBuffer)
 			workConn := NewConnection(s.autoIncrConnId(), conn, s)
-			go workConn.start()
+			go workConn.Start()
 		}
 	}()
 
@@ -78,7 +93,7 @@ func (s *Server) autoIncrConnId() int64 {
 
 func (s *Server) Server() {
 	if err := s.start(); err != nil {
-		s.LogErr("server start err: %v", err)
+		s.LogErr("server Start err: %v", err)
 		return
 	}
 
@@ -89,14 +104,14 @@ func (s *Server) Stop() {
 	s.LogInfo("stop Server")
 }
 
-func (s *Server) GetConnectionMgr() *ConnectionMgr {
+func (s *Server) GetConnectionMgr() IConnectionMgr {
 	return s.ConnectionMgr
 }
 
-func (s *Server) GetDataPack() *DataPack {
+func (s *Server) GetDataPack() IDataPack {
 	return s.DataPack
 }
 
-func (s *Server) AddRouter(router Router) {
+func (s *Server) AddRouter(router IRouter) {
 	s.MsgHandle.Add(router)
 }
