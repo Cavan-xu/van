@@ -3,25 +3,16 @@
 一款 **go** 语言开发的轻量级框架，适合用于游戏服务器开发
 具有以下特点：
 
-> 基于 **TCP** 协议稳定传输数据，
-> 每个 **socket** 连接创建工作协程，无需考虑消息的并发问题。
-> 用户自定义消息路由，并支持编写路由前、路由中、路由后钩子函数。
-> 框架集成连接管理器、数据装箱拆箱、路由管理、日志管理，同时也支持用户自定义。
+- 基于 **TCP** 协议稳定传输数据
+- 为每个 **socket** 连接创建工作协程，无需考虑消息的并发问题
+- 支持自定义消息路由、编写路由前、路由中、路由后钩子函数
+- 框架集成连接管理器、消息体装箱拆箱、路由管理、日志管理，同时也支持自定义
 
 ## 开箱即用
 
 **客户端示例**
 
-````
-package main
-
-import (
-	"net"
-	"time"
-
-	"github.com/Cavan-xu/van/vnet"
-)
-
+````go
 func main() {
 	rAddr, err := net.ResolveTCPAddr("tcp4", "127.0.0.1:12310")
 	if err != nil {
@@ -49,25 +40,11 @@ func main() {
 
 **服务器示例**
 
-自定义router
+**自定义router**
 
-```
-package routers
-
-import (
-	"fmt"
-
-	"github.com/Cavan-xu/van/vnet"
-)
-
+```go
 type PingRouter struct {
 	MsgId uint32
-}
-
-func NewPingRouter() *PingRouter {
-	return &PingRouter{
-		MsgId: 1,
-	}
 }
 
 func (r *PingRouter) GetMsgId() uint32 {
@@ -87,24 +64,9 @@ func (r *PingRouter) AfterHandle(req vnet.IRequest) {
 }
 ```
 
-服务启动
+**服务启动**
 
-```
-package main
-
-import (
-	"path/filepath"
-
-	"github.com/Cavan-xu/van/core/conf"
-	"github.com/Cavan-xu/van/core/log"
-	"github.com/Cavan-xu/van/example/server/routers"
-	"github.com/Cavan-xu/van/vnet"
-)
-
-var (
-	ConfigFileName = filepath.Join("example/server/conf", "conf.json")
-)
-
+```go
 func main() {
 	var (
 		config = &vnet.Config{}
@@ -123,4 +85,3 @@ func main() {
 	server.Server()
 }
 ```
-
