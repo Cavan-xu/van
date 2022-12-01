@@ -12,7 +12,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 	conn, err := net.DialTCP("tcp4", nil, rAddr)
 	if err != nil {
 		panic(err)
@@ -28,7 +27,6 @@ func main() {
 		pack := vnet.NewDataPack()
 		data := pack.Pack(message)
 		conn.Write(data)
-
 		time.Sleep(10 * time.Second)
 	}
 }
