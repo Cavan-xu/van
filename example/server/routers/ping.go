@@ -2,7 +2,8 @@ package routers
 
 import (
 	"fmt"
-	"van/vnet"
+
+	"github.com/Cavan-xu/van/vnet"
 )
 
 type PingRouter struct {

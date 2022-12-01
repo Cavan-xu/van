@@ -2,10 +2,11 @@ package main
 
 import (
 	"path/filepath"
-	"van/core/conf"
-	"van/core/log"
-	"van/example/server/routers"
-	"van/vnet"
+
+	"github.com/Cavan-xu/van/core/conf"
+	"github.com/Cavan-xu/van/core/log"
+	"github.com/Cavan-xu/van/example/server/routers"
+	"github.com/Cavan-xu/van/vnet"
 )
 
 var (

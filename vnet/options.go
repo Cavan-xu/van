@@ -1,6 +1,6 @@
 package vnet
 
-import "van/core/log"
+import "github.com/Cavan-xu/van/core/log"
 
 type Option func(s *Server)
 

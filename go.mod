@@ -1,4 +1,4 @@
-module van
+module github.com/Cavan-xu/van
 
 go 1.16
 

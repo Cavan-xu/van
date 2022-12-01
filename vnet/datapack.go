@@ -1,6 +1,6 @@
 package vnet
 
-import "van/core/codeengine"
+import "github.com/Cavan-xu/van/core/codeengine"
 
 var (
 	MessageHeadLen = 12

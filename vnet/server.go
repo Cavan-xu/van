@@ -3,7 +3,8 @@ package vnet
 import (
 	"net"
 	"sync/atomic"
-	"van/core/log"
+
+	"github.com/Cavan-xu/van/core/log"
 )
 
 type Server struct {
@@ -21,9 +22,6 @@ func NewServer(config *Config, opts ...Option) (*Server, error) {
 	s := &Server{
 		connId: new(int64),
 		Config: config,
-		//ConnectionMgr: NewConnectionMgr(),
-		//DataPack:      NewDataPack(),
-		//MsgHandle:     NewMsgHandle(),
 	}
 
 	for _, opt := range opts {

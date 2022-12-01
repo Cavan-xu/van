@@ -3,7 +3,8 @@ package main
 import (
 	"net"
 	"time"
-	"van/vnet"
+
+	"github.com/Cavan-xu/van/vnet"
 )
 
 func main() {
