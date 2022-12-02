@@ -37,4 +37,5 @@ func (m *Message) GetData() []byte {
 
 func (m *Message) SetData(data []byte) {
 	m.Data = data
+	m.DataLen = uint32(len(data))
 }
