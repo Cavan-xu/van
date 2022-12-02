@@ -13,7 +13,7 @@ type IConnection interface {
 	Read()
 	Write()
 	Stop()
-	SendMsg(data []byte)
+	SendMsg(IMessage)
 	GetServer() *Server
 }
 
@@ -124,8 +124,8 @@ func (c *Connection) Stop() {
 	c.server.GetConnectionMgr().Delete(c.id)
 }
 
-func (c *Connection) SendMsg(data []byte) {
-	c.msgChan <- data
+func (c *Connection) SendMsg(message IMessage) {
+	c.msgChan <- c.server.GetDataPack().Pack(message)
 }
 
 func (c *Connection) RemoteAddr() net.Addr {
