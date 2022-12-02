@@ -89,13 +89,8 @@ func (s *Server) autoIncrConnId() int64 {
 	return atomic.AddInt64(s.connId, 1)
 }
 
-func (s *Server) Server() {
-	if err := s.start(); err != nil {
-		s.LogErr("server Start err: %v", err)
-		return
-	}
-
-	select {}
+func (s *Server) Server() error {
+	return s.start()
 }
 
 func (s *Server) Stop() {
