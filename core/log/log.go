@@ -126,7 +126,7 @@ func (l *Log) shiftFile(filename string) {
 // 获取到代码所在的文件名、行数
 func FileLine() string {
 	if _, fileName, fileLine, ok := runtime.Caller(1); ok {
-		return fmt.Sprintf("%s:%s", path.Base(fileName), fileLine)
+		return fmt.Sprintf("%s:%d", path.Base(fileName), fileLine)
 	}
 	return ""
 }
