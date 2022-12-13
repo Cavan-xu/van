@@ -125,15 +125,18 @@ func (l *Log) shiftFile(filename string) {
 	extFileName := path.Ext(filename)
 	baseFileName := strings.TrimSuffix(filename, extFileName)
 	for i := l.FileCount - 1; i >= 0; i-- {
-		tmpFileName := fmt.Sprintf("%s%d%s", baseFileName, i, extFileName)
+		tmpFileName := fmt.Sprintf("%s_%d%s", baseFileName, i, extFileName)
+		newFileName := fmt.Sprintf("%s_%d%s", baseFileName, i+1, extFileName)
+		if i == 0 {
+			_ = os.Rename(filename, newFileName)
+		}
 		if _, err := os.Stat(tmpFileName); err != nil {
 			continue
 		}
 		if i+1 == l.FileCount {
 			_ = os.Remove(tmpFileName)
 		} else {
-			newFileName := fmt.Sprintf("%s%d%s", baseFileName, i+1, extFileName)
-			_ = os.Rename(filename, newFileName)
+			_ = os.Rename(tmpFileName, newFileName)
 		}
 	}
 }
