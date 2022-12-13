@@ -1,4 +1,4 @@
-package log
+package vlog
 
 import (
 	"fmt"
@@ -44,6 +44,15 @@ type Log struct {
 	FileCount  int    // 单日最多日志文件数
 	LogMask    int    // 日志级别
 	sync.Mutex
+}
+
+func NewLogEngine(filePrefix string, fileSize, fileCount int, logMask int) ILog {
+	return &Log{
+		FilePrefix: filePrefix,
+		FileSize:   fileSize,
+		FileCount:  fileCount,
+		LogMask:    logMask,
+	}
 }
 
 func (l *Log) LogDebug(format string, v ...interface{}) {
@@ -95,6 +104,12 @@ func (l *Log) log(logLevel LogLevel, format string, v ...interface{}) {
 	_, _ = fd.WriteString(fmt.Sprintf("[%s][%s]", curTime, logLevelName))
 	_, _ = fd.WriteString(fmt.Sprintf(format+"\n", v...))
 	_ = fd.Close()
+
+	if runtime.GOOS == "windows" {
+		fmt.Printf("[[%s]][%s]", curTime, logLevelName)
+		fmt.Printf(format+"\n", v...)
+	}
+
 	l.shiftFile(fileName)
 }
 

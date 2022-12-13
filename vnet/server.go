@@ -4,7 +4,7 @@ import (
 	"net"
 	"sync/atomic"
 
-	"github.com/Cavan-xu/van/core/log"
+	"github.com/Cavan-xu/van/core/vlog"
 )
 
 type Server struct {
@@ -12,7 +12,7 @@ type Server struct {
 	connId *int64
 
 	*Config
-	log.ILog
+	vlog.ILog
 	ConnectionMgr IConnectionMgr
 	DataPack      IDataPack
 	MsgHandle     IMsgHandler
@@ -39,7 +39,7 @@ func (s *Server) setUp() error {
 		return err
 	}
 	if s.ILog == nil {
-		s.ILog = &log.Log{}
+		s.ILog = &vlog.Log{}
 	}
 	if s.ConnectionMgr == nil {
 		s.ConnectionMgr = NewConnectionMgr()

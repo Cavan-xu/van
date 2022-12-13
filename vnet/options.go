@@ -1,10 +1,10 @@
 package vnet
 
-import "github.com/Cavan-xu/van/core/log"
+import "github.com/Cavan-xu/van/core/vlog"
 
 type Option func(s *Server)
 
-func WithLog(log log.ILog) Option {
+func WithLog(log vlog.ILog) Option {
 	return func(s *Server) {
 		s.ILog = log
 	}
