@@ -101,7 +101,7 @@ func (l *Log) log(logLevel LogLevel, format string, v ...interface{}) {
 
 	logLevelName := LogLevelNameMap[logLevel]
 	curTime := time.Now().Format("2006-01-02 15:04:05")
-	_, _ = fd.WriteString(fmt.Sprintf("[%s][%s]", curTime, logLevelName))
+	_, _ = fd.WriteString(fmt.Sprintf("[%s][%s][%s]", curTime, logLevelName, FileLine()))
 	_, _ = fd.WriteString(fmt.Sprintf(format+"\n", v...))
 	_ = fd.Close()
 
@@ -143,7 +143,7 @@ func (l *Log) shiftFile(filename string) {
 
 // 获取到代码所在的文件名、行数
 func FileLine() string {
-	if _, fileName, fileLine, ok := runtime.Caller(1); ok {
+	if _, fileName, fileLine, ok := runtime.Caller(3); ok {
 		return fmt.Sprintf("%s:%d", path.Base(fileName), fileLine)
 	}
 	return ""
