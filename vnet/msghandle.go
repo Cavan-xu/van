@@ -27,6 +27,7 @@ func (m *MsgHandle) Add(router IRouter) {
 	m.Apis[msgId] = router
 }
 
+// 需要修改，暴露连接给框架使用者
 func (m *MsgHandle) DoMsgHandle(req IRequest) {
 	handle, ok := m.Apis[req.GetMsgId()]
 	if !ok {
